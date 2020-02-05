@@ -140,7 +140,7 @@ endif ()
 Directories("${CMAKE_CURRENT_SOURCE_DIR}/liblzf" liblzf_INCLUDE_DIRS)
 
 # tritriintersect
-Directories("${CMAKE_CURRENT_SOURCE_DIR}/tomasakeninemoeller" tomasakeninemoeller_INCLUDE_DIRS)
+Directories("${CMAKE_CURRENT_SOURCE_DIR}/tomasakeninemoeller/include" tomasakeninemoeller_INCLUDE_DIRS)
 
 # PNG
 if (BUILD_PNG)
@@ -205,7 +205,7 @@ endif ()
 if (BUILD_TINYFILEDIALOGS)
     message(STATUS "Building TINYFILEDIALOGS from source")
     add_subdirectory(tinyfiledialogs)
-    set(tinyfiledialogs_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tinyfiledialogs")
+    set(tinyfiledialogs_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/tinyfiledialogs/include")
     set(tinyfiledialogs_LIBRARIES tinyfiledialogs)
 else ()
     message(SEND_ERROR "TINYFILEDIALOGS dependency not met.")
