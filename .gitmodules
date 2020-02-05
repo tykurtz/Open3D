@@ -22,7 +22,7 @@
 [submodule "3rdparty/fmt"]
 	path = 3rdparty/fmt
 	url = https://github.com/fmtlib/fmt.git
-[submodule "3rdparty/tinygltf"]
+[submodule "3rdparty/tinygltf/tinygltf"]
 	path = 3rdparty/tinygltf/tinygltf
 	url = https://github.com/syoyo/tinygltf.git
 [submodule "3rdparty/libjpeg-turbo/libjpeg-turbo"]
