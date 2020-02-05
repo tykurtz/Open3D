@@ -4,6 +4,7 @@ find_package(OpenGL    QUIET)
 find_package(pybind11  QUIET)
 
 if (PKGCONFIG_FOUND)
+    pkg_search_module(FLANN           flann           REQUIRED)
     pkg_search_module(EIGEN3          eigen3>=3.2.7   QUIET)
     pkg_search_module(GLFW            glfw3           QUIET)
     pkg_search_module(GLEW            glew            QUIET)
@@ -320,7 +321,6 @@ set(poisson_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/)
 list(APPEND 3RDPARTY_INCLUDE_DIRS
      # ${dirent_INCLUDE_DIRS} # fails on Linux, seems to require Windows headers
      ${EIGEN3_INCLUDE_DIRS}
-     ${flann_INCLUDE_DIRS}
      ${GLEW_INCLUDE_DIRS}
      ${GLFW_INCLUDE_DIRS}
      ${JPEG_TURBO_INCLUDE_DIRS}
@@ -363,6 +363,7 @@ list(APPEND 3RDPARTY_LIBRARY_DIRS
 list(APPEND 3RDPARTY_LIBRARIES
      ${GLEW_LIBRARIES}
      ${GLFW_LIBRARIES}
+     ${FLANN_LIBRARIES}
      ${JPEG_TURBO_LIBRARIES}
      ${JSONCPP_LIBRARIES}
      ${PNG_LIBRARIES}
