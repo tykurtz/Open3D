@@ -52,6 +52,7 @@ if (BUILD_FLANN OR NOT FLANN_FOUND)
 else ()
   message(STATUS "Using system flann ${FLANN_VERSION}")
 endif ()
+message(STATUS "Flann includes ${FLANN_INCLUDE_DIRS}")
 
 # GLEW
 if (BUILD_GLEW)
@@ -344,7 +345,7 @@ list(APPEND 3RDPARTY_INCLUDE_DIRS
      ${googletest_INCLUDE_DIRS}
      ${fmt_INCLUDE_DIRS}
      ${k4a_INCLUDE_DIRS}
-     ${poisson_INCLUDE_DIRS}
+     # ${poisson_INCLUDE_DIRS}
 )
 
 # set 3RDPARTY_INCLUDE_DIRS_AT_INSTALL
@@ -368,6 +369,7 @@ list(APPEND 3RDPARTY_LIBRARY_DIRS
 
 # set 3RDPARTY_LIBRARIES
 list(APPEND 3RDPARTY_LIBRARIES
+     ${FLANN_LIBRARIES}
      ${GLEW_LIBRARIES}
      ${GLFW_LIBRARIES}
      ${JPEG_TURBO_LIBRARIES}

@@ -257,10 +257,15 @@ include_directories(
 # Suppress 3rdparty header warnings with SYSTEM
 include_directories(
     SYSTEM
-    ${PROJECT_SOURCE_DIR}/3rdparty
     ${3RDPARTY_INCLUDE_DIRS}
+    # ${PROJECT_SOURCE_DIR}/3rdparty
     ${PROJECT_SOURCE_DIR}/3rdparty/librealsense/include
 )
+
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
 
 # Open3D library
 add_subdirectory(src)
