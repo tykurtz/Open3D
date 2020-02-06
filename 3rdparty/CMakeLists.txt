@@ -217,7 +217,7 @@ Directories("${CMAKE_CURRENT_SOURCE_DIR}/tinygltf" tinygltf_INCLUDE_DIRS)
 # tinyobjloader
 message(STATUS "Building tinyobjloader from source")
 include_directories("tinyobjloader/")
-add_library(tinyobjloader STATIC tinyobjloader/tiny_obj_loader.cc)
+add_library(tinyobjloader STATIC tinyobjloader/tinyobjloader/tiny_obj_loader.cc)
 if (NOT BUILD_SHARED_LIBS)
   install(TARGETS tinyobjloader
         RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
@@ -321,7 +321,7 @@ set(fmt_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/fmt/include)
 INSTALL_HEADERS(fmt)
 
 # PoissonRecon
-set(poisson_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/)
+set(poisson_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/PoissonRecon)
 
 
 list(APPEND 3RDPARTY_INCLUDE_DIRS
@@ -339,12 +339,12 @@ list(APPEND 3RDPARTY_INCLUDE_DIRS
      ${rply_INCLUDE_DIRS}
      ${tinyfiledialogs_INCLUDE_DIRS}
      ${tinygltf_INCLUDE_DIRS}
-     ${tinyfobjloader_INCLUDE_DIRS}
+     ${tinyobjloader_INCLUDE_DIRS}
      ${qhull_INCLUDE_DIRS}
      ${googletest_INCLUDE_DIRS}
      ${fmt_INCLUDE_DIRS}
      ${k4a_INCLUDE_DIRS}
-     # ${poisson_INCLUDE_DIRS}
+     ${poisson_INCLUDE_DIRS}
 )
 
 # set 3RDPARTY_INCLUDE_DIRS_AT_INSTALL

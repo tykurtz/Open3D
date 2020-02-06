@@ -258,7 +258,6 @@ include_directories(
 include_directories(
     SYSTEM
     ${3RDPARTY_INCLUDE_DIRS}
-    # ${PROJECT_SOURCE_DIR}/3rdparty
     ${PROJECT_SOURCE_DIR}/3rdparty/librealsense/include
 )
 
