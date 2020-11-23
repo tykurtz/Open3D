@@ -33,6 +33,6 @@
 #ifdef FLANN_VERSION_
 #undef FLANN_VERSION_
 #endif
-#define FLANN_VERSION_ "1.9.1"
+#define FLANN_VERSION_ "${FLANN_VERSION}"
 
 #endif /* FLANN_CONFIG_H_ */

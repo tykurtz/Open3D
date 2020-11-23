@@ -27,12 +27,77 @@
  *************************************************************************/
 
 
-#ifndef FLANN_CONFIG_H_
-#define FLANN_CONFIG_H_
+#ifndef MPI_QUERIES_H_
+#define MPI_QUERIES_H_
 
-#ifdef FLANN_VERSION_
-#undef FLANN_VERSION_
-#endif
-#define FLANN_VERSION_ "1.9.1"
+#include <flann/mpi/matrix.h>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/asio.hpp>
 
-#endif /* FLANN_CONFIG_H_ */
+namespace flann
+{
+
+template<typename T>
+struct Request
+{
+	flann::Matrix<T> queries;
+	int nn;
+	int checks;
+
+	template<typename Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & queries & nn & checks;
+	}
+};
+
+template<typename T>
+struct Response
+{
+	flann::Matrix<int> indices;
+	flann::Matrix<T> dists;
+
+	template<typename Archive>
+	void serialize(Archive& ar, const unsigned int version)
+	{
+		ar & indices & dists;
+	}
+};
+
+
+using boost::asio::ip::tcp;
+
+template <typename T>
+void read_object(tcp::socket& sock, T& val)
+{
+	uint32_t size;
+	boost::asio::read(sock, boost::asio::buffer(&size, sizeof(size)));
+	size = ntohl(size);
+
+	boost::asio::streambuf archive_stream;
+	boost::asio::read(sock, archive_stream, boost::asio::transfer_at_least(size));
+
+	boost::archive::binary_iarchive archive(archive_stream);
+	archive >> val;
+}
+
+template <typename T>
+void write_object(tcp::socket& sock, const T& val)
+{
+	boost::asio::streambuf archive_stream;
+	boost::archive::binary_oarchive archive(archive_stream);
+	archive << val;
+
+	uint32_t size = archive_stream.size();
+	size = htonl(size);
+	boost::asio::write(sock, boost::asio::buffer(&size, sizeof(size)));
+	boost::asio::write(sock, archive_stream);
+
+}
+
+}
+
+
+
+#endif /* MPI_QUERIES_H_ */

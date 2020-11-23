@@ -27,12 +27,63 @@
  *************************************************************************/
 
 
-#ifndef FLANN_CONFIG_H_
-#define FLANN_CONFIG_H_
+#ifndef MPI_CLIENT_H_
+#define MPI_CLIENT_H_
 
-#ifdef FLANN_VERSION_
-#undef FLANN_VERSION_
-#endif
-#define FLANN_VERSION_ "1.9.1"
+#include <cstdlib>
+#include <boost/asio.hpp>
+#include <flann/util/matrix.h>
+#include <flann/util/params.h>
+#include "queries.h"
 
-#endif /* FLANN_CONFIG_H_ */
+namespace flann {
+namespace mpi {
+
+
+class Client
+{
+public:
+	Client(const std::string& host, const std::string& service)
+	{
+	    tcp::resolver resolver(io_service_);
+	    tcp::resolver::query query(tcp::v4(), host, service);
+	    iterator_ = resolver.resolve(query);
+	}
+
+
+	template<typename ElementType, typename DistanceType>
+	void knnSearch(const flann::Matrix<ElementType>& queries, flann::Matrix<int>& indices, flann::Matrix<DistanceType>& dists, int knn, const SearchParams& params)
+	{
+	    tcp::socket sock(io_service_);
+	    sock.connect(*iterator_);
+
+	    Request<ElementType> req;
+	    req.nn = knn;
+	    req.queries = queries;
+	    req.checks = params.checks;
+	    // send request
+	    write_object(sock,req);
+
+	    Response<DistanceType> resp;
+	    // read response
+	    read_object(sock, resp);
+
+	    for (size_t i=0;i<indices.rows;++i) {
+	    	for (size_t j=0;j<indices.cols;++j) {
+	    		indices[i][j] = resp.indices[i][j];
+	    		dists[i][j] = resp.dists[i][j];
+	    	}
+	    }
+	}
+
+
+private:
+	boost::asio::io_service io_service_;
+	tcp::resolver::iterator iterator_;
+};
+
+
+} //namespace mpi
+} // namespace flann
+
+#endif // MPI_CLIENT_H_

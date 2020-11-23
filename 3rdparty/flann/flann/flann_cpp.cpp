@@ -1,8 +1,8 @@
 /***********************************************************************
  * Software License Agreement (BSD License)
  *
- * Copyright 2008-2011  Marius Muja (mariusm@cs.ubc.ca). All rights reserved.
- * Copyright 2008-2011  David G. Lowe (lowe@cs.ubc.ca). All rights reserved.
+ * Copyright 2008-2009  Marius Muja (mariusm@cs.ubc.ca). All rights reserved.
+ * Copyright 2008-2009  David G. Lowe (lowe@cs.ubc.ca). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,4 @@
  *************************************************************************/
 
 
-#ifndef FLANN_CONFIG_H_
-#define FLANN_CONFIG_H_
-
-#ifdef FLANN_VERSION_
-#undef FLANN_VERSION_
-#endif
-#define FLANN_VERSION_ "1.9.1"
-
-#endif /* FLANN_CONFIG_H_ */
+#include "flann/flann.hpp"

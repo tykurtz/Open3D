@@ -27,12 +27,28 @@
  *************************************************************************/
 
 
-#ifndef FLANN_CONFIG_H_
-#define FLANN_CONFIG_H_
+#ifndef MPI_MATRIX_H_
+#define MPI_MATRIX_H_
 
-#ifdef FLANN_VERSION_
-#undef FLANN_VERSION_
-#endif
-#define FLANN_VERSION_ "1.9.1"
+#include <flann/util/matrix.h>
+#include <boost/serialization/array.hpp>
 
-#endif /* FLANN_CONFIG_H_ */
+
+namespace boost {
+namespace serialization {
+
+template<class Archive, class T>
+void serialize(Archive & ar, flann::Matrix<T> & matrix, const unsigned int version)
+{
+	ar & matrix.rows & matrix.cols & matrix.stride;
+    if (Archive::is_loading::value) {
+        matrix = flann::Matrix<T>(new T[matrix.rows*matrix.cols], matrix.rows, matrix.cols, matrix.stride);
+    }
+    ar & boost::serialization::make_array(matrix.ptr(), matrix.rows*matrix.cols);
+}
+
+}
+}
+
+
+#endif /* MPI_MATRIX_H_ */

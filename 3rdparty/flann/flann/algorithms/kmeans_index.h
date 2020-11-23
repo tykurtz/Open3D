@@ -41,7 +41,7 @@
 #include "flann/general.h"
 #include "flann/algorithms/nn_index.h"
 #include "flann/algorithms/dist.h"
-#include "flann/algorithms/center_chooser.h"
+#include <flann/algorithms/center_chooser.h>
 #include "flann/util/matrix.h"
 #include "flann/util/result_set.h"
 #include "flann/util/heap.h"
@@ -117,8 +117,6 @@ public:
         cb_index_  = get_param(params,"cb_index",0.4f);
 
         initCenterChooser();
-        chooseCenters_->setDataset(inputData);
-
         setDataset(inputData);
     }
 
@@ -168,13 +166,13 @@ public:
     {
         switch(centers_init_) {
         case FLANN_CENTERS_RANDOM:
-        	chooseCenters_ = new RandomCenterChooser<Distance>(distance_);
+        	chooseCenters_ = new RandomCenterChooser<Distance>(distance_, points_);
         	break;
         case FLANN_CENTERS_GONZALES:
-        	chooseCenters_ = new GonzalesCenterChooser<Distance>(distance_);
+        	chooseCenters_ = new GonzalesCenterChooser<Distance>(distance_, points_);
         	break;
         case FLANN_CENTERS_KMEANSPP:
-            chooseCenters_ = new KMeansppCenterChooser<Distance>(distance_);
+            chooseCenters_ = new KMeansppCenterChooser<Distance>(distance_, points_);
         	break;
         default:
             throw FLANNException("Unknown algorithm for choosing initial centers.");
@@ -220,7 +218,7 @@ public:
         size_t old_size = size_;
 
         extendDataset(points);
-
+        
         if (rebuild_threshold>1 && size_at_build_*rebuild_threshold<size_) {
             buildIndex();
         }
@@ -228,7 +226,7 @@ public:
             for (size_t i=0;i<points.rows;++i) {
                 DistanceType dist = distance_(root_->pivot, points[i], veclen_);
                 addPointToTree(root_, old_size + i, dist);
-            }
+            }            
         }
     }
 
@@ -330,6 +328,8 @@ protected:
      */
     void buildIndexImpl()
     {
+        chooseCenters_->setDataSize(veclen_);
+
         if (branching_<2) {
             throw FLANNException("Branching factor must be at least 2");
         }
@@ -416,6 +416,7 @@ private:
     		Index* obj = static_cast<Index*>(ar.getObject());
 
     		if (Archive::is_loading::value) {
+    			delete[] pivot;
     			pivot = new DistanceType[obj->veclen_];
     		}
     		ar & serialization::make_binary_object(pivot, obj->veclen_*sizeof(DistanceType));
@@ -510,7 +511,7 @@ private:
         for (size_t j=0; j<veclen_; ++j) {
             mean[j] *= div_factor;
         }
-
+        
         DistanceType radius = 0;
         DistanceType variance = 0;
         for (size_t i=0; i<size; ++i) {
@@ -519,11 +520,12 @@ private:
                 radius = dist;
             }
             variance += dist;
-        }
+        }        
         variance /= size;
 
         node->variance = variance;
         node->radius = radius;
+        delete[] node->pivot;
         node->pivot = mean;
     }
 
@@ -965,7 +967,7 @@ private:
         varianceValue = meanVariance/root->size;
         return clusterCount;
     }
-
+    
     void addPointToTree(NodePtr node, size_t index, DistanceType dist_to_pivot)
     {
         ElementType* point = points_[index];
@@ -975,7 +977,7 @@ private:
         // if radius changed above, the variance will be an approximation
         node->variance = (node->size*node->variance+dist_to_pivot)/(node->size+1);
         node->size++;
-
+        
         if (node->childs.empty()) { // leaf node
         	PointInfo point_info;
         	point_info.index = index;
@@ -991,7 +993,7 @@ private:
                 computeClustering(node, &indices[0], indices.size(), branching_);
             }
         }
-        else {
+        else {            
             // find the closest child
             int closest = 0;
             DistanceType dist = distance_(node->childs[closest]->pivot, point, veclen_);
@@ -1003,7 +1005,7 @@ private:
                 }
             }
             addPointToTree(node->childs[closest], index, dist);
-        }
+        }                
     }
 
 
@@ -1037,7 +1039,7 @@ private:
      * of the cluster.
      */
     float cb_index_;
-
+    
     /**
      * The root node in the tree.
      */

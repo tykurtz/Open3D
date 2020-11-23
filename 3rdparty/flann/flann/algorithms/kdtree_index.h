@@ -32,11 +32,11 @@
 #define FLANN_KDTREE_INDEX_H_
 
 #include <algorithm>
-#include <cmath>
 #include <map>
 #include <cassert>
 #include <cstring>
 #include <stdarg.h>
+#include <cmath>
 
 #include "flann/general.h"
 #include "flann/algorithms/nn_index.h"
@@ -138,14 +138,14 @@ public:
     }
 
     using BaseClass::buildIndex;
-
+    
     void addPoints(const Matrix<ElementType>& points, float rebuild_threshold = 2)
     {
         assert(points.cols==veclen_);
 
         size_t old_size = size_;
         extendDataset(points);
-
+        
         if (rebuild_threshold>1 && size_at_build_*rebuild_threshold<size_) {
             buildIndex();
         }
@@ -155,7 +155,7 @@ public:
                     addPointToTree(tree_roots_[j], i);
                 }
             }
-        }
+        }        
     }
 
     flann_algorithm_t getType() const
@@ -299,15 +299,19 @@ private:
          * Point data
          */
         ElementType* point;
-        /**
-         * The child nodes.
-         */
-        Node* child1, * child2;
+		/**
+		* The child nodes.
+		*/
+		Node* child1, *child2;
+		Node(){
+			child1 = NULL;
+			child2 = NULL;
+		}
+		~Node() {
+			if (child1 != NULL) { child1->~Node(); child1 = NULL; }
 
-        ~Node() {
-        	if (child1!=NULL) child1->~Node();
-        	if (child2!=NULL) child2->~Node();
-        }
+			if (child2 != NULL) { child2->~Node(); child2 = NULL; }
+		}
 
     private:
     	template<typename Archive>
@@ -654,17 +658,17 @@ private:
             searchLevelExact<with_removed>(result_set, vec, otherChild, new_distsq, epsError);
         }
     }
-
+    
     void addPointToTree(NodePtr node, int ind)
     {
         ElementType* point = points_[ind];
-
+        
         if ((node->child1==NULL) && (node->child2==NULL)) {
             ElementType* leaf_point = node->point;
             ElementType max_span = 0;
             size_t div_feat = 0;
             for (size_t i=0;i<veclen_;++i) {
-                ElementType span = std::fabs(point[i]-leaf_point[i]);
+                ElementType span = std::abs(point[i]-leaf_point[i]);
                 if (span > max_span) {
                     max_span = span;
                     div_feat = i;
@@ -690,14 +694,14 @@ private:
             node->divfeat = div_feat;
             node->divval = (point[div_feat]+leaf_point[div_feat])/2;
             node->child1 = left;
-            node->child2 = right;
+            node->child2 = right;            
         }
         else {
             if (point[node->divfeat]<node->divval) {
                 addPointToTree(node->child1,ind);
             }
             else {
-                addPointToTree(node->child2,ind);
+                addPointToTree(node->child2,ind);                
             }
         }
     }

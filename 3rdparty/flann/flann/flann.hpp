@@ -31,10 +31,6 @@
 #ifndef FLANN_HPP_
 #define FLANN_HPP_
 
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4081 4244 4267 4291 4334)
-#endif
 
 #include <vector>
 #include <string>
@@ -276,7 +272,7 @@ public:
                                  std::vector< std::vector<size_t> >& indices,
                                  std::vector<std::vector<DistanceType> >& dists,
                                  size_t knn,
-                           const SearchParams& params)
+                           const SearchParams& params) const
     {
     	return nnIndex_->knnSearch(queries, indices, dists, knn, params);
     }
@@ -302,7 +298,7 @@ public:
     /**
      * \brief Perform radius search
      * \param[in] queries The query points
-     * \param[out] indices The indinces of the neighbors found within the given radius
+     * \param[out] indices The indices of the neighbors found within the given radius
      * \param[out] dists The distances to the nearest neighbors found
      * \param[in] radius The radius used for search
      * \param[in] params Search parameters
@@ -338,7 +334,7 @@ public:
     /**
      * \brief Perform radius search
      * \param[in] queries The query points
-     * \param[out] indices The indinces of the neighbors found within the given radius
+     * \param[out] indices The indices of the neighbors found within the given radius
      * \param[out] dists The distances to the nearest neighbors found
      * \param[in] radius The radius used for search
      * \param[in] params Search parameters
@@ -379,13 +375,13 @@ private:
             return NULL;
         }
         IndexHeader header = load_header(fin);
-        if (header.data_type != flann_datatype_value<ElementType>::value) {
-            throw FLANNException("Datatype of saved index is different than of the one to be created.");
+        if (header.h.data_type != flann_datatype_value<ElementType>::value) {
+            throw FLANNException("Datatype of saved index is different than of the one to be loaded.");
         }
 
         IndexParams params;
-        params["algorithm"] = header.index_type;
-        IndexType* nnIndex = create_index_by_type<Distance>(header.index_type, dataset, params, distance);
+        params["algorithm"] = header.h.index_type;
+        IndexType* nnIndex = create_index_by_type<Distance>(header.h.index_type, dataset, params, distance);
         rewind(fin);
         nnIndex->loadIndex(fin);
         fclose(fin);
@@ -436,9 +432,4 @@ int hierarchicalClustering(const Matrix<typename Distance::ElementType>& points,
 }
 
 }
-
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
 #endif /* FLANN_HPP_ */

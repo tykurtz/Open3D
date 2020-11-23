@@ -43,7 +43,7 @@ jsoncpp                     1.8.4                                    MIT license
 A C++ library that allows manipulating JSON values
 https://github.com/open-source-parsers/jsoncpp
 --------------------------------------------------------------------------------
-flann                       1.8.4                                    BSD license
+flann                       1.9.1                                    BSD license
 A C++ library for performing fast approximate nearest neighbor searches in high
 dimensional spaces
 http://www.cs.ubc.ca/research/flann/
@@ -78,7 +78,7 @@ Poisson Surface Reconstruction
 https://github.com/mkazhdan/PoissonRecon
 --------------------------------------------------------------------------------
 Parallel STL                20190522                            Apache-2 license
-An implementation of the C++ standard library algorithms with support for 
+An implementation of the C++ standard library algorithms with support for
 execution policies
 https://github.com/oneapi-src/oneDPL
 --------------------------------------------------------------------------------

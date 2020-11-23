@@ -41,6 +41,10 @@
 #include "flann/algorithms/hierarchical_clustering_index.h"
 #include "flann/algorithms/lsh_index.h"
 #include "flann/algorithms/autotuned_index.h"
+#ifdef FLANN_USE_CUDA
+#include "flann/algorithms/kdtree_cuda_3d_index.h"
+#endif
+
 
 namespace flann
 {
